@@ -2,9 +2,9 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/test-connection', function () {
+Route::get('/health-check', function () {
     return response()->json([
-        'status' => 'success',
-        'message' => 'Laravel API connection is working.',
+        'status' => 'ok',
+        'message' => 'Backend is connected!',
     ]);
 });
