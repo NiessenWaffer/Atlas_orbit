@@ -18342,16 +18342,11 @@ __webpack_require__.r(__webpack_exports__);
 
 
 vue__WEBPACK_IMPORTED_MODULE_0___default.a.use(vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]);
-var Home = {
-  render: function render(createElement) {
-    return createElement(_App_vue__WEBPACK_IMPORTED_MODULE_2__["default"]);
-  }
-};
 var router = new vue_router__WEBPACK_IMPORTED_MODULE_1__["default"]({
-  mode: 'history',
+  mode: 'hash',
   routes: [{
     path: '/',
-    component: Home
+    component: _App_vue__WEBPACK_IMPORTED_MODULE_2__["default"]
   }]
 });
 new vue__WEBPACK_IMPORTED_MODULE_0___default.a({

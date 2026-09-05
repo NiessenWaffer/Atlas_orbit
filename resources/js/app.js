@@ -4,18 +4,12 @@ import App from './App.vue';
 
 Vue.use(VueRouter);
 
-const Home = {
-    render(createElement) {
-        return createElement(App);
-    },
-};
-
 const router = new VueRouter({
-    mode: 'history',
+    mode: 'hash',
     routes: [
         {
             path: '/',
-            component: Home,
+            component: App,
         },
     ],
 });
