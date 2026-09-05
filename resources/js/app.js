@@ -1,20 +1,16 @@
 import Vue from 'vue';
 import VueRouter from 'vue-router';
 import App from './App.vue';
+import routes from './router';
 
 Vue.use(VueRouter);
 
 const router = new VueRouter({
     mode: 'hash',
-    routes: [
-        {
-            path: '/',
-            component: App,
-        },
-    ],
+    routes,
 });
 
 new Vue({
     router,
-    render: (createElement) => createElement({ template: '<router-view />' }),
+    render: (createElement) => createElement(App),
 }).$mount('#app');

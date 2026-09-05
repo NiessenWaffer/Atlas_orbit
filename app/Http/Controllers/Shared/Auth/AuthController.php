@@ -3,12 +3,47 @@
 namespace App\Http\Controllers\Shared\Auth;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Http\Requests\Shared\Auth\LoginRequest;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    function login(LoginRequest $request){
-        dd($request->validated());
+    public function login(LoginRequest $request)
+    {
+        $credentials = $request->only('email', 'password');
+
+        if (! Auth::attempt($credentials)) {
+            return response()->json([
+                'message' => 'Invalid credentials.',
+                'errors' => [
+                    'email' => ['The provided credentials do not match our records.'],
+                ],
+            ], 422);
+        }
+
+        $request->session()->regenerate();
+
+        return response()->json([
+            'message' => 'Login successful.',
+            'user' => Auth::user(),
+        ]);
+    }
+
+    public function currentUser(Request $request)
+    {
+        return response()->json([
+            'user' => $request->user(),
+        ]);
+    }
+
+    public function logout(Request $request)
+    {
+        Auth::guard('web')->logout();
+
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return response()->noContent();
     }
 }
