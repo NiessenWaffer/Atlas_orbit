@@ -27,6 +27,7 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Login successful.',
             'user' => Auth::user(),
+            'csrf_token' => csrf_token(),
         ]);
     }
 
@@ -34,6 +35,7 @@ class AuthController extends Controller
     {
         return response()->json([
             'user' => $request->user(),
+            'csrf_token' => csrf_token(),
         ]);
     }
 

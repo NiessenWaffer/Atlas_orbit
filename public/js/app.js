@@ -1971,10 +1971,14 @@ __webpack_require__.r(__webpack_exports__);
       var _this3 = this;
       this.submitting = true;
       this.error = '';
-      _api_http__WEBPACK_IMPORTED_MODULE_0__["default"].post('/logout').then(function () {
+      _api_http__WEBPACK_IMPORTED_MODULE_0__["default"].get('/current-user').then(function () {
+        return _api_http__WEBPACK_IMPORTED_MODULE_0__["default"].post('/logout');
+      }).then(function () {
         _this3.user = null;
         _this3.form.password = '';
         window.location.reload();
+      })["catch"](function (error) {
+        _this3.error = error.response && error.response.data.message ? error.response.data.message : 'Logout failed.';
       })["finally"](function () {
         _this3.submitting = false;
       });
@@ -18523,11 +18527,12 @@ __webpack_require__.r(__webpack_exports__);
 /*!**********************************!*\
   !*** ./resources/js/api/http.js ***!
   \**********************************/
-/*! exports provided: default */
+/*! exports provided: setCsrfToken, default */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "setCsrfToken", function() { return setCsrfToken; });
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
 /* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_0__);
 function _typeof(o) { "@babel/helpers - typeof"; return _typeof = "function" == typeof Symbol && "symbol" == typeof Symbol.iterator ? function (o) { return typeof o; } : function (o) { return o && "function" == typeof Symbol && o.constructor === Symbol && o !== Symbol.prototype ? "symbol" : typeof o; }, _typeof(o); }
@@ -18538,15 +18543,41 @@ function _toPropertyKey(t) { var i = _toPrimitive(t, "string"); return "symbol" 
 function _toPrimitive(t, r) { if ("object" != _typeof(t) || !t) return t; var e = t[Symbol.toPrimitive]; if (void 0 !== e) { var i = e.call(t, r || "default"); if ("object" != _typeof(i)) return i; throw new TypeError("@@toPrimitive must return a primitive value."); } return ("string" === r ? String : Number)(t); }
 
 var csrfToken = document.head.querySelector('meta[name="csrf-token"]');
+var activeCsrfToken = csrfToken ? csrfToken.content : '';
 var http = axios__WEBPACK_IMPORTED_MODULE_0___default.a.create({
   baseURL: window.appBasePath || '',
   withCredentials: true,
   headers: _objectSpread({
     Accept: 'application/json',
     'X-Requested-With': 'XMLHttpRequest'
-  }, csrfToken ? {
-    'X-CSRF-TOKEN': csrfToken.content
+  }, activeCsrfToken ? {
+    'X-CSRF-TOKEN': activeCsrfToken
   } : {})
+});
+function setCsrfToken(token) {
+  if (!token) {
+    return;
+  }
+  activeCsrfToken = token;
+  http.defaults.headers.common['X-CSRF-TOKEN'] = token;
+  if (csrfToken) {
+    csrfToken.content = token;
+  }
+}
+if (csrfToken) {
+  setCsrfToken(csrfToken.content);
+}
+http.interceptors.request.use(function (config) {
+  if (activeCsrfToken) {
+    config.headers['X-CSRF-TOKEN'] = activeCsrfToken;
+  }
+  return config;
+});
+http.interceptors.response.use(function (response) {
+  if (response.data && response.data.csrf_token) {
+    setCsrfToken(response.data.csrf_token);
+  }
+  return response;
 });
 /* harmony default export */ __webpack_exports__["default"] = (http);
 

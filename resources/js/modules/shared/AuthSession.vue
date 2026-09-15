@@ -89,11 +89,17 @@ export default {
             this.submitting = true;
             this.error = '';
 
-            http.post('/logout')
+            http.get('/current-user')
+                .then(() => http.post('/logout'))
                 .then(() => {
                     this.user = null;
                     this.form.password = '';
                     window.location.reload();
+                })
+                .catch((error) => {
+                    this.error = error.response && error.response.data.message
+                        ? error.response.data.message
+                        : 'Logout failed.';
                 })
                 .finally(() => {
                     this.submitting = false;
