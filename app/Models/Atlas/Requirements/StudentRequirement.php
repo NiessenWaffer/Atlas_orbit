@@ -12,7 +12,7 @@ class StudentRequirement extends Model
     protected $fillable = [
         'student_id',
         'requirement_type_id',
-        'source_template_id',
+        'requirement_template_id',
         'status',
         'deadline'  
     ];
@@ -26,6 +26,6 @@ class StudentRequirement extends Model
     }
 
     public function template(){
-        return $this->belongsTo(RequirementTemplate::class,'source_template_id');
+        return $this->belongsTo(RequirementTemplate::class,'requirement_template_id');
     }
 }
